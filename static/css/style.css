@@ -1,0 +1,63 @@
+.div-body {
+    padding: 2%;
+    margin: 2%;
+    border-radius: 10px;
+}
+
+.homepage-form {
+    padding: 2%;
+    margin: 2%;
+    border-radius: 10px;
+    border: 1px solid #000;
+    width: 50%;
+}
+
+.questions-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 90%;
+    margin: 0 auto;
+}
+
+.question-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    background-color: rgb(250, 252, 253);
+    padding: 10px;
+    margin: 4px;
+    text-align: left;
+}
+
+.question-details {
+    margin-right: auto; /* Pushes the option buttons to the end */
+    padding: 10px;
+}
+
+.option-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end; /* Aligns the buttons to the end */
+    align-items: center;
+}
+
+.option-buttons button {
+    margin-left: 7px; /* Adjust as needed */
+    padding: 7px;
+    justify-content: center;
+    width: 100px;
+}
+
+.option-button.btn-pressed {
+    color: white;
+}
+
+.progress-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Ensure it's above other content */
+}

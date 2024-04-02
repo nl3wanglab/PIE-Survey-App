@@ -1,0 +1,295 @@
+{% extends "Childrens_Behavior_Questionnaire/base.html" %}
+
+{% block title %}Homepage{% endblock %}
+
+{% block content %}
+{% set total_questions = questions|length %}
+{% set answered_questions = 0 %}
+{% for question_num, question_details in questions.items() %}
+    {% if question_num in selectedOptions %}
+        {% set answered_questions = answered_questions + 1 %}
+    {% endif %}
+{% endfor %}
+{% set progress = (answered_questions / total_questions) * 100 %}
+
+<div class="progress progress-container" style="margin-bottom: 20px;">
+    <div class="progress-bar bg-success" role="progressbar" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">{{ progress }}%</div>
+</div>
+
+<h1>Children's Behavior Questionnaire </h1>
+<hr>
+
+<div class="form-group" style="margin-bottom: 20px;">
+    <label for="subjectno" style="margin-bottom: 5px;" >Subject No:</label>
+    <input type="text" class="form-control" id="subjectno" placeholder="Enter Patient's Subject No." style="border-radius: 15px;">
+    <p id="subjectnoOutput" style="display: none;"></p>
+</div>
+
+<div class="form-group" style="margin-bottom: 20px;">
+    <label for="patientName" style="margin-bottom: 5px;" >Child's Name:</label>
+    <input type="text" class="form-control" id="patientName" placeholder="Enter Patient's Name" style="border-radius: 15px;">
+    <p id="patientNameOutput" style="display: none;"></p>
+</div>
+
+<div class="form-group" style="margin-bottom: 20px;">
+    <label for="patientgender" style="margin-bottom: 5px;" >Child's Gender:</label>
+    <input type="text" class="form-control" id="patientgender" placeholder="Enter Patient's Gender" style="border-radius: 15px;">
+    <p id="patientGenderOutput" style="display: none;"></p>
+</div>
+
+<div class="form-group" style="margin-bottom: 20px;">
+    <label for="dob" style="margin-bottom: 5px;">Child's Date of Birth:</label>
+    <input type="date" class="form-control" id="dob" style="border-radius: 15px;">
+    <p id="dobOutput" style="display: none;"></p>
+</div>
+
+<div class="form-group" style="margin-bottom: 20px;">
+    <label for="dateTime" style="margin-bottom: 5px;">Todays Date and Start Time</label>
+    <input type="text" class="form-control" id="dateTime" style="border-radius: 15px;" readonly>
+    <p id="dateTimeOutput" style="display: none;"></p>
+</div>
+
+<div class="form-group" style="margin-bottom: 20px;">
+    <label for="childAge" style="margin-bottom: 5px;">Child's Age:</label>
+    <input type="text" class="form-control" id="childAge" style="border-radius: 15px;" readonly>
+    <p id="childAgeOutput" style="display: none;"></p>
+</div>
+
+
+<script>
+    function updateOutput(id, value) {
+        document.getElementById(id).value = value;
+    }
+
+    const dobInput = document.getElementById('dob');
+    const childAgeInput = document.getElementById('childAge');
+
+    dobInput.addEventListener('change', () => {
+        const dob = new Date(dobInput.value);
+        const today = new Date();
+        let years = today.getFullYear() - dob.getFullYear();
+        let months = today.getMonth() - dob.getMonth();
+        if (today.getDate() < dob.getDate()) {
+            months--;
+        }
+        if (months < 0) {
+            years--;
+            months += 12;
+        }
+        childAgeInput.value = `${years} years and ${months} months`;
+    });
+</script>
+
+<div class="form-group" style="margin-bottom: 20px;">
+    <fieldset style="border: 2px solid #ccc; padding: 20px; border-radius: 15px;">
+        <legend style="margin-bottom: 20px;">Instructions:</legend>
+        <p>Please read carefully before starting: On the next pages you will see a set of statements that describe children's reactions to a number of situations. We would like you to tell us what your child's reaction is likely to be in those situations. There are of course no "correct" ways of reacting; children differ widely in their reactions, and it is these differences we are trying to learn about. Please read each statement and decide whether it is a "true" or "untrue" description of your child's reaction within the past six months. Use the following scale to indicate how well a statement describes your child:</p>
+        <p>Choose # If the statement is:</p>
+        <ol>
+            <li>extremely untrue of your child</li>
+            <li>quite untrue of your child</li>
+            <li>slightly untrue of your child</li>
+            <li>neither true nor false of your child</li>
+            <li>slightly true of your child</li>
+            <li>quite true of your child</li>
+            <li>extremely true of your child</li>
+        </ol>
+        <p>If you cannot answer one of the items because you have never seen the child in that situation, for example, if the statement is about the child's reaction to your singing and you have never sung to your child, then choose NA(not applicable).</p>
+        <p>Please be sure to choose a number or NA for every item.</p>
+    </fieldset>
+</div>
+
+<script>
+    var now = new Date();
+    var year = now.getFullYear();
+    var month = ("0" + (now.getMonth() + 1)).slice(-2);
+    var day = ("0" + now.getDate()).slice(-2);
+    var hours = ("0" + now.getHours()).slice(-2);
+    var minutes = ("0" + now.getMinutes()).slice(-2);
+    var seconds = ("0" + now.getSeconds()).slice(-2);
+    var strDateTime = `${year}-${month}-${day} ${hours}:${minutes}`;
+
+    document.getElementById('dateTime').value = strDateTime;
+</script>
+
+<input type="hidden" id="quizType" value="{{ quiz_type }}">
+
+<div class="questions-container">
+    {% for question_num, question_details in questions.items() %}
+    <div class="question-container" style="display: flex; align-items: center;">
+        <p class="question-details">{{ question_num }}. {{ question_details['question_prompt'] }}</p>
+        <div class="option-buttons" id="option-buttons-{{ question_num }}">
+            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="1">1</button>
+            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="2">2</button>
+            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="3">3</button>
+            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="4">4</button>
+            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="5">5</button>
+            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="6">6</button>
+            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="7">7</button>
+            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="-1">N/A</button>
+        </div>
+    </div>
+    {% if loop.index is divisibleby 10 %}
+        <fieldset class="form-group" style="border: 2px solid #ccc; padding: 20px; border-radius: 15px; margin-top: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between;">
+                <div>
+                    <p>1</p>
+                    <p>extremely untrue of your child</p>
+                </div>
+                <div>
+                    <p>2</p>
+                    <p>quite untrue of your child</p>
+                </div>
+                <div>
+                    <p>3</p>
+                    <p>slightly untrue of your child</p>
+                </div>
+                <div>
+                    <p>4</p>
+                    <p>neither true nor false of your child</p>
+                </div>
+                <div>
+                    <p>5</p>
+                    <p>slightly true of your child</p>
+                </div>
+                <div>
+                    <p>6</p>
+                    <p>quite true of your child</p>
+                </div>
+                <div>
+                    <p>7</p>
+                    <p>extremely true of your child</p>
+                </div>
+            </div>
+        </fieldset>
+    {% endif %}
+    {% endfor %}
+</div>
+<input type="hidden" id="selected-options" name="selected-options">
+<button type="submit" class="btn btn-primary" id="nextButton">Submit</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+
+<style>
+    .selected-option {
+        font-weight: bold;
+        font-size: 1.2em;
+    }
+</style>
+
+<script>
+    const optionButtons = document.querySelectorAll('.option-button');
+    let selectedOptions = {};
+    
+    optionButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const questionNum = button.getAttribute('data-question');
+            const option = button.getAttribute('data-option');
+    
+            // Update the selected option directly in the selectedOptions object
+            selectedOptions[questionNum] = option;
+        
+            const buttonsOfQuestion = document.querySelectorAll(`#option-buttons-${questionNum} .option-button`);
+            buttonsOfQuestion.forEach(btn => {
+                btn.classList.remove('btn-primary');
+                btn.classList.remove('selected-option'); // Remove the 'selected-option' class
+                btn.classList.add('btn-outline-primary');
+            });
+    
+            button.classList.remove('btn-outline-primary');
+            button.classList.add('btn-primary');
+            button.classList.add('selected-option'); // Add the 'selected-option' class
+    
+            const totalQuestions = Object.keys(selectedOptions).length;
+            const progress = (totalQuestions / {{ total_questions }}) * 100;
+            const progressBar = document.querySelector('.progress-bar');
+            progressBar.style.width = `${progress}%`;
+            progressBar.textContent = `${progress.toFixed(2)}%`;
+        });
+    });
+
+    const nextButton = document.getElementById('nextButton');
+    const quizType = document.getElementById('quizType').value;
+
+    nextButton.addEventListener('click', () => {  
+        event.preventDefault();
+
+        const subjectNoInput = document.querySelector('#subjectno');
+        const subjectNoOutput = document.querySelector('#subjectnoOutput');
+        const patientNameInput = document.querySelector('#patientName');
+        const patientNameOutput = document.querySelector('#patientNameOutput');
+        const patientGenderInput = document.querySelector('#patientgender');
+        const patientGenderOutput = document.querySelector('#patientGenderOutput');
+        const dobInput = document.querySelector('#dob');
+        const dobOutput = document.querySelector('#dobOutput');
+        const dateTimeInput = document.querySelector('#dateTime');
+        const dateTimeOutput = document.querySelector('#dateTimeOutput');
+
+        subjectNoOutput.textContent = subjectNoInput.value;
+        subjectNoOutput.style.display = 'block';
+        subjectNoOutput.style.fontWeight = 'bold';
+        patientNameOutput.textContent = patientNameInput.value;
+        patientNameOutput.style.display = 'block';
+        patientNameOutput.style.fontWeight = 'bold';
+        patientGenderOutput.textContent = patientGenderInput.value;
+        patientGenderOutput.style.display = 'block';
+        patientGenderOutput.style.fontWeight = 'bold';
+        dobOutput.textContent = dobInput.value;
+        dobOutput.style.display = 'block';
+        dobOutput.style.fontWeight = 'bold';
+        dateTimeOutput.textContent = dateTimeInput.value;
+        dateTimeOutput.style.display = 'block';
+        dateTimeOutput.style.fontWeight = 'bold';
+        const childAgeOutput = document.querySelector('#childAgeOutput');
+        childAgeOutput.textContent = childAge.value;
+        childAgeOutput.style.display = 'block';
+        childAgeOutput.style.fontWeight = 'bold';
+
+        // Saving PDF functionality
+        // var pdf = new jsPDF();
+        // pdf.fromHTML(document.body.outerHTML);
+        // pdf.save('test.pdf');
+
+        const subjectNoValue = document.querySelector('#subjectno').value;
+        const patientNameValue = document.querySelector('#patientName').value;
+        const patientGenderValue = document.querySelector('#patientgender').value;
+        const dobValue = document.querySelector('#dob').value;
+        const dateTimeValue = document.querySelector('#dateTime').value;
+
+        const data = {
+            subjectNo: subjectNoValue,
+            patientName: patientNameValue,
+            patientGender: patientGenderValue,
+            dob: dobValue,
+            dateTime: dateTimeValue,
+            childAgeOutput: childAge.value,
+            quizData: selectedOptions,
+        };
+
+        const jsonString = JSON.stringify(data);    
+
+        fetch('/submit/Childrens_Behavior_Questionnaire', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: jsonString,
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if (data.success) {
+                // downloads file: window.location.href = data.excel;
+                window.location.href = data.redirect;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+    
+    
+</script>
+
+{% endblock %}
