@@ -40,6 +40,6 @@
   Running on http://127.0.0.1:5000
   ```
 
-### Result calculation
+### Result Calculations
 
 The logic for the result calculation is implemented in the `app.py` file. The raw submission data as well as calculated results are saved in an excel file in the `static/saves` directory.
