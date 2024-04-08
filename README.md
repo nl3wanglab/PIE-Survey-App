@@ -19,7 +19,8 @@
   # Install the requirements into your virtual environment.
     pip install -r requirements.txt
   ```
-- Run the app
+  
+### Running the App
 
   Ensure you're in the project directory. If not, use the cd (change directory) command to move into the Survey Application folder you previously installed. 
 - ```bash
