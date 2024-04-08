@@ -10,6 +10,8 @@
 - Install the requirements
 
   ```bash
+  # CD (Change Directory) into the Installed Folder (You can type 'cd' then drag and drop the folder into terminal)
+    cd {folder_location}
   # Create your virtual environment.
     python3 -m venv .venv
   # Activate your virtual environment.
@@ -19,12 +21,20 @@
   ```
 - Run the app
 
-  Be in the root directory of the project and run the following command after activating your virtual environment to start the Flask server.
+  Ensure you're in the project directory. If not, use the cd (change directory) command to move into the Survey Application folder you previously installed. 
+- ```bash
+  cd {folder_location}
+  ```
+  Activate the python environment that you installed the requirements to earlier.
+- ```bash
+  source .venv/bin/activate
+  ```
+  Run the command below to launch the program.
 - ```bash
   python app.py
   ```
 
-  Locate the text similar to what is shown below within your terminal after running the command above. Paste this link into your web browser to utilize this application.
+  Locate the text similar to what is shown below within your terminal after running the command above. Paste this link into your web browser to load the webpage.
 - ```bash
   Running on http://127.0.0.1:5000
   ```
