@@ -31,4 +31,4 @@
 
 ### Result calculation
 
-The logic for the result calculation is implemented in the `app.py` file. The raw and calculated results are saved as an excel file in the `static/saves` directory.
+The logic for the result calculation is implemented in the `app.py` file. The raw submission data as well as calculated results are saved in an excel file in the `static/saves` directory.
