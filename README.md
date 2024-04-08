@@ -26,7 +26,7 @@
 - ```bash
   cd {folder_location}
   ```
-  Activate the python environment that you installed the requirements to earlier.
+  Activate the python environment you installed the requirements to earlier.
 - ```bash
   source .venv/bin/activate
   ```
