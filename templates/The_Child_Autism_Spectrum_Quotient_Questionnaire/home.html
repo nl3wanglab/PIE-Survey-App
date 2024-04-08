@@ -1,6 +1,6 @@
-{% extends "Childrens_Behavior_Questionnaire/base.html" %}
+{% extends "The_Child_Autism_Spectrum_Quotient_Questionnaire/base.html" %}
 
-{% block title %}Homepage{% endblock %}
+{% block title %}CB3 Quiz{% endblock %}
 
 {% block content %}
 {% set total_questions = questions|length %}
@@ -16,7 +16,7 @@
     <div class="progress-bar bg-success" role="progressbar" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">{{ progress }}%</div>
 </div>
 
-<h1>Children's Behavior Questionnaire </h1>
+<h1>The Child Autism Spectrum Quotient Questionnaire</h1>
 <hr>
 
 <div class="form-group" style="margin-bottom: 20px;">
@@ -83,19 +83,7 @@
 <div class="form-group" style="margin-bottom: 20px;">
     <fieldset style="border: 2px solid #ccc; padding: 20px; border-radius: 15px;">
         <legend style="margin-bottom: 20px;">Instructions:</legend>
-        <p>Please read carefully before starting: On the next pages you will see a set of statements that describe children's reactions to a number of situations. We would like you to tell us what your child's reaction is likely to be in those situations. There are of course no "correct" ways of reacting; children differ widely in their reactions, and it is these differences we are trying to learn about. Please read each statement and decide whether it is a "true" or "untrue" description of your child's reaction within the past six months. Use the following scale to indicate how well a statement describes your child:</p>
-        <p>Choose # If the statement is:</p>
-        <ol>
-            <li>extremely untrue of your child</li>
-            <li>quite untrue of your child</li>
-            <li>slightly untrue of your child</li>
-            <li>neither true nor false of your child</li>
-            <li>slightly true of your child</li>
-            <li>quite true of your child</li>
-            <li>extremely true of your child</li>
-        </ol>
-        <p>If you cannot answer one of the items because you have never seen the child in that situation, for example, if the statement is about the child's reaction to your singing and you have never sung to your child, then choose NA(not applicable).</p>
-        <p>Please be sure to choose a number or NA for every item.</p>
+        <p>W.I.P.</p>
     </fieldset>
 </div>
 
@@ -119,50 +107,14 @@
     <div class="question-container" style="display: flex; align-items: center;">
         <p class="question-details">{{ question_num }}. {{ question_details['question_prompt'] }}</p>
         <div class="option-buttons" id="option-buttons-{{ question_num }}">
-            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="1">1</button>
-            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="2">2</button>
-            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="3">3</button>
-            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="4">4</button>
-            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="5">5</button>
-            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="6">6</button>
-            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="7">7</button>
-            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="-1">N/A</button>
+            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="definitely agree">definitely agree</button>
+            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="slightly agree">slightly agree</button>
+            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="slightly disagree">slightly disagree</button>
+            <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="definitely disagree">definitely disagree</button>
+            <!-- <button type="button" class="btn btn-outline-primary option-button" data-question="{{ question_num }}" data-option="-1">N/A</button> -->
         </div>
     </div>
-    {% if loop.index is divisibleby 10 %}
-        <fieldset class="form-group" style="border: 2px solid #ccc; padding: 20px; border-radius: 15px; margin-top: 20px; margin-bottom: 20px;">
-            <div style="display: flex; justify-content: space-between;">
-                <div>
-                    <p>1</p>
-                    <p>extremely untrue of your child</p>
-                </div>
-                <div>
-                    <p>2</p>
-                    <p>quite untrue of your child</p>
-                </div>
-                <div>
-                    <p>3</p>
-                    <p>slightly untrue of your child</p>
-                </div>
-                <div>
-                    <p>4</p>
-                    <p>neither true nor false of your child</p>
-                </div>
-                <div>
-                    <p>5</p>
-                    <p>slightly true of your child</p>
-                </div>
-                <div>
-                    <p>6</p>
-                    <p>quite true of your child</p>
-                </div>
-                <div>
-                    <p>7</p>
-                    <p>extremely true of your child</p>
-                </div>
-            </div>
-        </fieldset>
-    {% endif %}
+    
     {% endfor %}
 </div>
 <input type="hidden" id="selected-options" name="selected-options">
@@ -312,7 +264,7 @@
 
         const jsonString = JSON.stringify(data);    
 
-        fetch('/submit/Childrens_Behavior_Questionnaire', {
+        fetch('/submit/The_Child_Autism_Spectrum_Quotient_Questionnaire', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

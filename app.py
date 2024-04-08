@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Flask, render_template, request, jsonify, url_for
 import questions
 import os
@@ -13,14 +14,23 @@ def home():
             'label': "Children's Behavior Questionnaire",
             'url': 'Childrens_Behavior_Questionnaire'
         },
+        {
+            'label': "The Child Autism Spectrum Quotient Questionnaire",
+            'url': 'The_Child_Autism_Spectrum_Quotient_Questionnaire'
+        },
     ]
 
     return render_template('home.html', options=options)
 
 @app.route('/<quiz_type>')
 def quiz_type(quiz_type):
-    questions_dict = questions.get_questions_Childrens_Behavior_Questionnaire()
-    #questions_dict = questions.get_questions(f'Quizzes/{quiz_type}.xlsx', 'questions')
+    questions_dict = {}
+
+    if quiz_type == 'Childrens_Behavior_Questionnaire':
+        questions_dict = questions.get_questions_Childrens_Behavior_Questionnaire()
+    elif quiz_type == 'The_Child_Autism_Spectrum_Quotient_Questionnaire':
+        questions_dict = questions.get_questions_The_Child_Autism_Spectrum_Quotient_Questionnaire()
+
     return render_template(f'{quiz_type}/home.html', questions=questions_dict, quiz_type=quiz_type)
 
 @app.route('/submit/Childrens_Behavior_Questionnaire', methods=['POST'])
@@ -37,7 +47,14 @@ def submit_cbq():
 
     questions_dict = questions.get_questions_Childrens_Behavior_Questionnaire()
 
-    filename = 'static/saves/' + dateTime + '.xlsx'
+    now = datetime.now()
+    dateTime = now.strftime("%Y-%m-%d_%H:%M:%S")
+    directory = 'static/saves/Childrens_Behavior_Questionnaire/'
+
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    filename = directory + dateTime + '.xlsx'
     workbook = xlsxwriter.Workbook(filename, {'nan_inf_to_errors': True})
     worksheet = workbook.add_worksheet()
 
@@ -120,9 +137,104 @@ def submit_cbq():
 
     return jsonify({'success': True, 'excel': url_for('static', filename=filename), 'redirect': url_to_go})
 
+@app.route('/submit/The_Child_Autism_Spectrum_Quotient_Questionnaire', methods=['POST'])
+def submit_casq():
+    data = request.get_json()
+
+    subjectNo = data['subjectNo']
+    patientName = data['patientName']
+    patientGender = data['patientGender']
+    dob = data['dob']
+    dateTime = data['dateTime']
+    childAgeOutput = data['childAgeOutput']
+    quizData = {k: v for k, v in data['quizData'].items()}
+
+    questions_dict = questions.get_questions_The_Child_Autism_Spectrum_Quotient_Questionnaire()
+
+    now = datetime.now()
+    dateTime = now.strftime("%Y-%m-%d_%H:%M:%S")
+    directory = 'static/saves/The_Child_Autism_Spectrum_Quotient_Questionnaire/'
+
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    filename = directory + dateTime + '.xlsx'
+    workbook = xlsxwriter.Workbook(filename, {'nan_inf_to_errors': True})
+    worksheet = workbook.add_worksheet()
+
+    bold = workbook.add_format({'bold': True})
+
+    worksheet.write('A1', 'subjectNo', bold)
+    worksheet.write('A2', subjectNo)
+
+    worksheet.write('B1', 'patientName', bold)
+    worksheet.write('B2', patientName)
+
+    worksheet.write('C1', 'patientGender', bold)
+    worksheet.write('C2', patientGender)
+
+    worksheet.write('D1', 'dob', bold)
+    worksheet.write('D2', dob)
+
+    worksheet.write('E1', 'dateTime', bold)
+    worksheet.write('E2', dateTime)
+
+    worksheet.write('F1', 'Child Age', bold)
+    worksheet.write('F2', childAgeOutput)
+
+    worksheet.write('A5', 'QUESTION', bold)
+    worksheet.write('B5', 'QUESTION #', bold)
+    worksheet.write('C5', 'QUESTION ANSWER', bold)
+    worksheet.write('D5', 'QUESTION ANSWER', bold)
+    worksheet.write('E5', 'REVERSE', bold)
+
+    sum = 0
+
+    for i, (question_number, answer) in enumerate(quizData.items(), start=6):
+        question_number_int = int(question_number)
+        question_data = questions_dict.get(question_number_int, {'question_prompt': 'Question Not Found', 'reverse': 'N/A'})
+        question = question_data['question_prompt']
+        worksheet.write(f'A{i}', question)
+        worksheet.write(f'B{i}', question_number)
+        worksheet.write(f'C{i}', answer)
+
+        answer_val = None
+
+        if answer == 'definitely agree':
+            answer_val = 0
+        elif answer == 'slightly agree':
+            answer_val = 1
+        elif answer == 'slightly disagree':
+            answer_val = 2
+        elif answer == 'definitely disagree':
+            answer_val = 3
+
+        print(answer, answer_val)
+
+        if question_data['reverse'] == 'R':
+            answer_val = 3 - answer_val
+
+        sum += answer_val
+
+        worksheet.write(f'D{i}', answer_val)
+        worksheet.write(f'E{i}', question_data['reverse'])
+
+    worksheet.write(f'I5', "SUM", bold)
+    worksheet.write(f'I6', sum)
+
+    workbook.close()
+
+    url_to_go = url_for('results_casq')
+
+    return jsonify({'success': True, 'excel': url_for('static', filename=filename), 'redirect': url_to_go})
+
 @app.route('/result/Childrens_Behavior_Questionnaire')
 def results_cbq():
     return render_template(f'Childrens_Behavior_Questionnaire/result.html')
+
+@app.route('/result/The_Child_Autism_Spectrum_Quotient_Questionnaire')
+def results_casq():
+    return render_template(f'The_Child_Autism_Spectrum_Quotient_Questionnaire/result.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
