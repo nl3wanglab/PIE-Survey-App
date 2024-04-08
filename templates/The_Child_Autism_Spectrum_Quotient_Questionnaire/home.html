@@ -20,12 +20,6 @@
 <hr>
 
 <div class="form-group" style="margin-bottom: 20px;">
-    <label for="subjectno" style="margin-bottom: 5px;" >Subject No:</label>
-    <input type="text" class="form-control" id="subjectno" placeholder="Enter Patient's Subject No." style="border-radius: 15px;">
-    <p id="subjectnoOutput" style="display: none;"></p>
-</div>
-
-<div class="form-group" style="margin-bottom: 20px;">
     <label for="patientName" style="margin-bottom: 5px;" >Child's Name:</label>
     <input type="text" class="form-control" id="patientName" placeholder="Enter Patient's Name" style="border-radius: 15px;">
     <p id="patientNameOutput" style="display: none;"></p>
@@ -41,6 +35,12 @@
     <label for="dob" style="margin-bottom: 5px;">Child's Date of Birth:</label>
     <input type="date" class="form-control" id="dob" style="border-radius: 15px;">
     <p id="dobOutput" style="display: none;"></p>
+</div>
+
+<div class="form-group" style="margin-bottom: 20px;">
+    <label for="address" style="margin-bottom: 5px;">Address:</label>
+    <input type="text" class="form-control" id="address" placeholder="Enter Patient's Address" style="border-radius: 15px;">
+    <p id="addressOutput" style="display: none;"></p>
 </div>
 
 <div class="form-group" style="margin-bottom: 20px;">
@@ -83,7 +83,9 @@
 <div class="form-group" style="margin-bottom: 20px;">
     <fieldset style="border: 2px solid #ccc; padding: 20px; border-radius: 15px;">
         <legend style="margin-bottom: 20px;">Instructions:</legend>
-        <p>W.I.P.</p>
+        <p>NOTE: This questionnaire is to be completed by the parent/guardian of each child aged 4 and above. Please complete all of the questions.</p>
+        <p>Please answer each of the following questions about your child or the person who is under your care by ticking a box that reflects your answer to the question most appropriately. If there is any question that you feel not able to comment, please ask your son, daughter, partner or the person to answer.</p>
+        <p></p>
     </fieldset>
 </div>
 
@@ -150,12 +152,17 @@
 <script>
     const optionButtons = document.querySelectorAll('.option-button');
     let selectedOptions = {};
+
+    var formSubmitted = false;
  
     window.addEventListener('beforeunload', function (e) {
-        // Cancel the event
-        e.preventDefault();
-        // Chrome requires returnValue to be set
-        e.returnValue = '';
+        // If the form hasn't been submitted, prevent the page from unloading
+        if (!formSubmitted) {
+            // Cancel the event
+            e.preventDefault();
+            // Chrome requires returnValue to be set
+            e.returnValue = '';
+        }
     });
     
     optionButtons.forEach(button => {
@@ -210,26 +217,26 @@
 
         event.preventDefault();
 
-        const subjectNoInput = document.querySelector('#subjectno');
-        const subjectNoOutput = document.querySelector('#subjectnoOutput');
         const patientNameInput = document.querySelector('#patientName');
         const patientNameOutput = document.querySelector('#patientNameOutput');
         const patientGenderInput = document.querySelector('#patientgender');
+        const addressInput = document.querySelector('#address');
         const patientGenderOutput = document.querySelector('#patientGenderOutput');
         const dobInput = document.querySelector('#dob');
         const dobOutput = document.querySelector('#dobOutput');
         const dateTimeInput = document.querySelector('#dateTime');
         const dateTimeOutput = document.querySelector('#dateTimeOutput');
+        const addressOutput = document.querySelector('#addressOutput');
 
-        subjectNoOutput.textContent = subjectNoInput.value;
-        subjectNoOutput.style.display = 'block';
-        subjectNoOutput.style.fontWeight = 'bold';
         patientNameOutput.textContent = patientNameInput.value;
         patientNameOutput.style.display = 'block';
         patientNameOutput.style.fontWeight = 'bold';
         patientGenderOutput.textContent = patientGenderInput.value;
         patientGenderOutput.style.display = 'block';
         patientGenderOutput.style.fontWeight = 'bold';
+        addressOutput.textContent = addressInput.value;
+        addressOutput.style.display = 'block';
+        addressOutput.style.fontWeight = 'bold';
         dobOutput.textContent = dobInput.value;
         dobOutput.style.display = 'block';
         dobOutput.style.fontWeight = 'bold';
@@ -246,18 +253,18 @@
         // pdf.fromHTML(document.body.outerHTML);
         // pdf.save('test.pdf');
 
-        const subjectNoValue = document.querySelector('#subjectno').value;
         const patientNameValue = document.querySelector('#patientName').value;
         const patientGenderValue = document.querySelector('#patientgender').value;
+        const addressValue = document.querySelector('#address').value;
         const dobValue = document.querySelector('#dob').value;
         const dateTimeValue = document.querySelector('#dateTime').value;
 
         const data = {
-            subjectNo: subjectNoValue,
             patientName: patientNameValue,
             patientGender: patientGenderValue,
             dob: dobValue,
             dateTime: dateTimeValue,
+            address: addressValue,
             childAgeOutput: childAge.value,
             quizData: selectedOptions,
         };
@@ -276,6 +283,7 @@
             // console.log(data);
             if (data.success) {
                 // downloads file: window.location.href = data.excel;
+                formSubmitted = true;
                 window.location.href = data.redirect;
             } else {
                 const errorMessage = document.getElementById('error-message');

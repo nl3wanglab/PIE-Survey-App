@@ -141,9 +141,9 @@ def submit_cbq():
 def submit_casq():
     data = request.get_json()
 
-    subjectNo = data['subjectNo']
     patientName = data['patientName']
     patientGender = data['patientGender']
+    address = data['address']
     dob = data['dob']
     dateTime = data['dateTime']
     childAgeOutput = data['childAgeOutput']
@@ -164,23 +164,23 @@ def submit_casq():
 
     bold = workbook.add_format({'bold': True})
 
-    worksheet.write('A1', 'subjectNo', bold)
-    worksheet.write('A2', subjectNo)
+    worksheet.write('A1', 'patientName', bold)
+    worksheet.write('A2', patientName)
 
-    worksheet.write('B1', 'patientName', bold)
-    worksheet.write('B2', patientName)
+    worksheet.write('B1', 'patientGender', bold)
+    worksheet.write('B2', patientGender)
 
-    worksheet.write('C1', 'patientGender', bold)
-    worksheet.write('C2', patientGender)
+    worksheet.write('C1', 'dob', bold)
+    worksheet.write('C2', dob)
 
-    worksheet.write('D1', 'dob', bold)
-    worksheet.write('D2', dob)
+    worksheet.write('D1', 'dateTime', bold)
+    worksheet.write('D2', dateTime)
 
-    worksheet.write('E1', 'dateTime', bold)
-    worksheet.write('E2', dateTime)
+    worksheet.write('E1', 'Child Age', bold)
+    worksheet.write('E2', childAgeOutput)
 
-    worksheet.write('F1', 'Child Age', bold)
-    worksheet.write('F2', childAgeOutput)
+    worksheet.write('F1', 'Address', bold)
+    worksheet.write('F2', address)
 
     worksheet.write('A5', 'QUESTION', bold)
     worksheet.write('B5', 'QUESTION #', bold)
@@ -208,8 +208,6 @@ def submit_casq():
             answer_val = 2
         elif answer == 'definitely disagree':
             answer_val = 3
-
-        print(answer, answer_val)
 
         if question_data['reverse'] == 'R':
             answer_val = 3 - answer_val

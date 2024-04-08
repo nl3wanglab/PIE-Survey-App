@@ -198,12 +198,17 @@
 <script>
     const optionButtons = document.querySelectorAll('.option-button');
     let selectedOptions = {};
+
+    var formSubmitted = false;
  
     window.addEventListener('beforeunload', function (e) {
-        // Cancel the event
-        e.preventDefault();
-        // Chrome requires returnValue to be set
-        e.returnValue = '';
+        // If the form hasn't been submitted, prevent the page from unloading
+        if (!formSubmitted) {
+            // Cancel the event
+            e.preventDefault();
+            // Chrome requires returnValue to be set
+            e.returnValue = '';
+        }
     });
     
     optionButtons.forEach(button => {
@@ -324,6 +329,7 @@
             // console.log(data);
             if (data.success) {
                 // downloads file: window.location.href = data.excel;
+                formSubmitted = true;
                 window.location.href = data.redirect;
             } else {
                 const errorMessage = document.getElementById('error-message');
